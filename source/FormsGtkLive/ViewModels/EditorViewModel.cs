@@ -1,64 +1,68 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Input;
+using System.Linq;
 using Xamarin.Forms;
+using SkiaSharp;
+using SkiaSharp.Views.Forms;
+using FormsGtkLive.Services;
+using System.Threading.Tasks;
 
 namespace FormsGtkLive.ViewModels
 {
     public class EditorViewModel : BindableObject
     {
-        private string _liveXaml;
-        private View _preview;
+        string _liveCode;
+        EvalResult _result;
 
-        public string LiveXaml
+        public string LiveCode
         {
-            get { return _liveXaml; }
+            get
+            {
+                return _liveCode;
+            }
             set
             {
-                _liveXaml = value;
-                PreviewXaml(_liveXaml);
+                _liveCode = value;
+                Preview();
             }
         }
 
-        public View Preview
+        public string ErrorMessage => FormatError();
+
+        private string FormatError()
         {
-            get { return _preview; }
-            set
-            {
-                _preview = value;
-                OnPropertyChanged();
-            }
+            if (_result == null || !_result.HasErrors || _result.Messages.Length == 0)
+                return "";
+
+            var message = _result.Messages[0];
+
+            return $"{message.Text} line:{message.Line} col:{message.Column}";
         }
 
-        public ICommand ReloadCommand => new Command(Reload);
+        public bool HasErrors => _result?.Messages.Any(m => m.MessageType == "error") ?? false;
 
-        private async void PreviewXaml(string xaml)
+        public ICommand PaintCommand => new Command<SKPaintSurfaceEventArgs>(Paint);
+
+        public ICommand PreviewCommand => new Command(() => Preview());
+
+        async Task Preview()
         {
-            var contentPage = new ContentPage();
-
-            try
-            {
-                if (string.IsNullOrEmpty(xaml))
-                    return;
-
-                string contentPageXaml = $"<?xml version='1.0' encoding='utf-8' ?><ContentPage xmlns='http://xamarin.com/schemas/2014/forms' xmlns:x='http://schemas.microsoft.com/winfx/2009/xaml' x:Class ='FormsGtkLive.XamlPage'>{xaml}</ContentPage>";
-
-                await Live.UpdatePageFromXamlAsync(contentPage, contentPageXaml);
-            }
-            catch (Exception exception)
-            {
-                // Error 
-                Debug.WriteLine(exception.Message);
-                var xamlException = Live.GetXamlException(exception);
-                await Live.UpdatePageFromXamlAsync(contentPage, xamlException);
-            }
-
-            Preview = contentPage.Content;
+            _result = await DependencyService.Get<IEvaluator>().Evaluate(LiveCode);
+            OnPropertyChanged(nameof(HasErrors));
+            OnPropertyChanged(nameof(ErrorMessage));
         }
 
-        private void Reload()
+        public void Paint(SKPaintSurfaceEventArgs args)
         {
-            PreviewXaml(LiveXaml);
+            if (_result?.HasErrors ?? false)
+            {
+
+            }
+            else
+            {
+                _result?.Result?.Invoke(args.Surface.Canvas);
+            }
         }
     }
 }

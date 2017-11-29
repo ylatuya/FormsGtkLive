@@ -7,7 +7,7 @@ namespace FormsGtkLive
     {
         public AppLive()
         {
-            MainPage = new LiveView();
+            MainPage = new CustomNavigationPage(new EditorView());
         }
     }
 }
