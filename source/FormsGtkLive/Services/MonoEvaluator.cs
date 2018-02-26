@@ -73,6 +73,7 @@ namespace FormsGtkLive.Services
             evaluator.Evaluate("using System;", out res, out hasRes);
             evaluator.Evaluate("using System.Collections.Generic;", out res, out hasRes);
             evaluator.Evaluate("using System.Linq;", out res, out hasRes);
+            evaluator.Evaluate("using System.IO;", out res, out hasRes);
             evaluator.Evaluate("using SkiaSharp;", out res, out hasRes);
         }
 
