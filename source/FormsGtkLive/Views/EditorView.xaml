@@ -19,7 +19,7 @@
             <views:SKCanvasView x:Name="canvas" PaintSurface="OnPaintSample" Grid.Column="1">
             </views:SKCanvasView>
         </Grid>
-        <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasErrors}"/>
+        <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasErrors}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
