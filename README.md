@@ -1,27 +1,44 @@
 # FormsGtkLive
 
-**Live XAML** development for Xamarin Forms Apps using Gtk Backend.
+**Live Skia** editor with Xamarin Forms using Gtk+ backend.
 
-<img src="images/live-layout-linux.gif" alt="Livel XAML Edit" Width="400" /> <img src="images/live-layout-error-linux.gif" alt="Errors" Width="400" />  <img src="images/update-layout-linux.gif" alt="Livel XAML Edit" Width="400" /> 
-
-***NOTE**: Work in progress!*
+<img src="images/skia-text.gif" alt="Live text" Width="400" /> <img src="images/skia-xamagon.gif" alt="Live Xamagon" Width="400" />  <img src="images/skia-images.gif" alt="Livel images" Width="400" /> 
 
 ## Setup
 
-Clone this repository. Open the solution in **FormsGtkLive.sln** with Visual Studio and press F7.
+Clone this repository. Open the solution in **FormsGtkLive.sln** with Visual Studio for Mac, update NuGet packages and run FormsGtkLive.
+
+**Disclaimer** This project has only be tested in a MacOS operating system with Visual Studio for Mac.
 
 ## Usage
 
-To live develop XAML you open the **FormsGtkLive** tool. Any XAML file included in the same folder as the  tool will be previewed.
+In the editor, write the Skia# code as if you were writting a function with a *SKCanvas canvas* parameter.
+```
+// clear the canvas / fill with red
+canvas.Clear (SKColors.Red);
+```
 
-The tool can also detect XAML markup **errors**.
+You can also directly copy and paste any of the examples in [Xamarin's Skia introduction ](https://developer.xamarin.com/guides/cross-platform/skiasharp/introduction/).
 
-![](images/errors.png)
+Internally, the code in the editor is evaluated into an Action like:
+```
+var codeToEval = $"new Action<SKCanvas>((SKCanvas canvas) => {{ {code} }});";
+```
+
+This action will be executed in the SKWidget's PaintSurface callback.
+
+Compiler errors will be reported in red at the bottom of the main window.
 
 ## Feedback 
 
-Please use [GitHub issues](https://github.com/jsuarezruiz/FormsGtkLive/issues) for questions, comments, feature requests, or if would like to vote on what others are recommending.
+This project was created for fun, it's not ready for production and I don't plan to maintain it. You are free to fork it and change for your own needs :)
 
 ## License
 
 Code released under the [MIT license](https://opensource.org/licenses/MIT).
+
+## References
+
+This project uses [GtkFormsLive](https://github.com/jsuarezruiz/FormsGtkLive) from @jsuarezruiz for the Xamarin Forms UI and
+[Continous](https://github.com/praeclarum/Continuous) from @praeclarum for the C# evaluator.
+
