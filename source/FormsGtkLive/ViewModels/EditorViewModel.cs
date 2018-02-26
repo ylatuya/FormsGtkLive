@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Linq;
 using Xamarin.Forms;
-using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using FormsGtkLive.Services;
 using System.Threading.Tasks;

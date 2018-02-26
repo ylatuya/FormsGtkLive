@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using FormsGtkLive.Views;
 using SkiaSharp.Views.Forms;
+using SkiaSharp.Views.Gtk;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.GTK;
 using SKFormsView = FormsGtkLive.Views.SKCanvasView;
@@ -9,7 +10,7 @@ using SKFormsView = FormsGtkLive.Views.SKCanvasView;
 [assembly: ExportRenderer(typeof(SKFormsView), typeof(FormsGtkLive.GTK.SKGtkViewRenderer))]
 namespace FormsGtkLive.GTK
 {
-    public class SKGtkViewRenderer : ViewRenderer<SKFormsView, SKDrawingAreaView>
+    public class SKGtkViewRenderer : ViewRenderer<SKFormsView, SKWidget>
     {
         protected override void Dispose(bool disposing)
         {
@@ -41,25 +42,28 @@ namespace FormsGtkLive.GTK
             base.OnElementChanged(e);
         }
 
-        void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        void OnPaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs e)
         {
             // the control is being repainted, let the user know
             (Element as ISKCanvasViewController)?.OnPaintSurface(new SKPaintSurfaceEventArgs(e.Surface, e.Info));
         }
 
-        protected virtual SKDrawingAreaView CreateNativeControl()
+        protected virtual SKWidget CreateNativeControl()
         {
-            return (SKDrawingAreaView)Activator.CreateInstance(typeof(SKDrawingAreaView));
+            return new SKWidget();
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
 
+            // FIXME: uncomment when supported
+            /*
             if (e.PropertyName == SKFormsView.IgnorePixelScalingProperty.PropertyName)
             {
                 Control.IgnorePixelScaling = Element.IgnorePixelScaling;
             }
+            */
         }
 
         void HandleSurfaceInvalidated(object sender, EventArgs e)
